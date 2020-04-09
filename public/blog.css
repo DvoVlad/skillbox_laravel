@@ -1,0 +1,11 @@
+#create-form{
+	width:400px;
+	margin:0 auto;
+}
+#create-form textarea {
+	resize:none;
+	height:300px;
+}
+.errors {
+	color:red;
+}
