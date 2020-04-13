@@ -8,6 +8,9 @@
 	@csrf
 	@include('layouts.validate')
 	<div class="form-group">
+		<input type="hidden" name="user_id" value="{{Auth::user()->id}}">
+	</div>
+	<div class="form-group">
 		<input class="form-control" name="name" type="text" placeholder="Название" value="{{old('name')}}">
 	</div>
 	<div class="form-group">

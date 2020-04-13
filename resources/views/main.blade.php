@@ -21,8 +21,10 @@
 				<a href="/tag/{{$tag->id}}/posts" class="badge badge-secondary">{{$tag->name}}</a>
 			@endforeach
 		</p>
+		@can('edit', $post)
 		<a href="/posts/{{$post->slug}}/update">Редактировать</a>
 		<form method="post" action="/posts/{{$post->slug}}/delete">@csrf @method("DELETE") <input type="submit" class="btn btn-danger" value="Удалить"></form>
+		@endcan
       </div><!-- /.blog-post -->
 		@endforeach
 	@endif

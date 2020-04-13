@@ -23,23 +23,23 @@ Route::get('/contacts', "FeedbackController@create");
 
 Route::post('/contacts', "FeedbackController@store");
 
-Route::get('/posts/create', "PostController@create");
+Route::get('/posts/create', "PostController@create")->middleware('auth');;
 
-Route::post('/posts/create', "PostController@store");
+Route::post('/posts/create', "PostController@store")->middleware('auth');;
 
 Route::get('/posts/{post}', "PostController@show");
 
-Route::get('/posts/{post}/update', "PostController@edit");
+Route::get('/posts/{post}/update', "PostController@edit")->middleware('auth');;
 
-Route::patch('/posts/{post}/update', "PostController@update");
+Route::patch('/posts/{post}/update', "PostController@update")->middleware('auth');;
 
-Route::delete('/posts/{post}/delete', "PostController@destroy");
+Route::delete('/posts/{post}/delete', "PostController@destroy")->middleware('auth');;
 
-Route::get('/admin/feedbacks', "FeedbackController@index");
+Route::get('/admin/feedbacks', "FeedbackController@index")->middleware('auth');;
 
-Route::get('/tags/create', "TagController@create");
+Route::get('/tags/create', "TagController@create")->middleware('auth');;
 
-Route::post('/tags/create', "TagController@store");
+Route::post('/tags/create', "TagController@store")->middleware('auth');;
 
 Route::get('/tag/{id}/posts', "PostController@indexTags");
 

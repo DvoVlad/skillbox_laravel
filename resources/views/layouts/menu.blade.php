@@ -5,5 +5,6 @@
       <a class="p-2 text-muted" href="/contacts">Контакты</a>
       <a class="p-2 text-muted" href="/posts/create">Создать статью</a>
       <a class="p-2 text-muted" href="/admin/feedbacks">Админ. раздел</a>
+      <a class="p-2 text-muted" href="/tags/create">Создать тег</a>
     </nav>
   </div>
