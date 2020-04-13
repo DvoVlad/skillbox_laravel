@@ -29,4 +29,16 @@ Route::post('/posts/create', "PostController@store");
 
 Route::get('/posts/{post}', "PostController@show");
 
+Route::get('/posts/{post}/update', "PostController@edit");
+
+Route::patch('/posts/{post}/update', "PostController@update");
+
+Route::delete('/posts/{post}/delete', "PostController@destroy");
+
 Route::get('/admin/feedbacks', "FeedbackController@index");
+
+Route::get('/tags/create', "TagController@create");
+
+Route::post('/tags/create', "TagController@store");
+
+Route::get('/tag/{id}/posts', "PostController@indexTags");

@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\Post;
+use App\{Post,Tag};
 
 class PostController extends Controller
 {
+	public function indexTags($id)
+	{
+		$posts = Tag::find($id)->posts->where("publish", "=", 1);
+		$tags = Tag::all();
+        return view('main', ['posts' => $posts, 'tags' => $tags]);
+	}
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +20,8 @@ class PostController extends Controller
     public function index()
     {
 		$posts = Post::where("publish", "=", 1)->latest()->get();
-        return view('main', ['posts' => $posts]);
+		$tags = Tag::all();
+        return view('main', ['posts' => $posts, 'tags' => $tags]);
     }
 
     /**
@@ -24,7 +31,8 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view("post_create");
+		$tags = Tag::all();
+        return view("post_create", ['tags' => $tags]);
     }
 
     /**
@@ -43,6 +51,11 @@ class PostController extends Controller
 		]);
 		$v["publish"] = $request->publish;
 		$post = Post::create($v);
+		if(!empty($request->tags)){
+			foreach ($request->tags as $tag) {
+				$post->tags()->attach($tag);
+			}
+		}
         return back()->with('success','Статья успешно создана');
     }
 
@@ -67,9 +80,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
-        //
+		$tags = Tag::all();
+		return view("post_update", ['post' => $post, 'tags' => $tags]);
     }
 
     /**
@@ -79,9 +93,23 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        $v = $request->validate([
+			'name' => 'required|min:5|max:100',
+			'slug' => 'required|alpha_dash|unique:posts,id,' . $post->id,
+			'anonce' => 'required|max:255',
+			'content' => 'required',
+		]);
+		$v["publish"] = $request->publish;
+		$post->update($v);
+		$post->tags()->detach();
+		if(!empty($request->tags)){
+			foreach ($request->tags as $tag) {
+				$post->tags()->attach($tag);
+			}
+		}
+		return back()->with('success','Статья успешно обновлена');
     }
 
     /**
@@ -90,8 +118,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        //
+        $post->delete();
+        return back()->with('success','Статья успешно удалена');
     }
 }

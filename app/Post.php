@@ -10,5 +10,10 @@ class Post extends Model
 	{
 		return 'slug';
 	}
+	
     protected $fillable = ['name', 'anonce', 'content', 'publish', 'slug'];
+    
+    public function tags() {
+		return $this->belongsToMany('App\Tag');
+	}
 }
