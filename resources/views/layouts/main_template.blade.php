@@ -47,7 +47,15 @@
         <a class="text-muted" href="#" aria-label="Search">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="mx-3" role="img" viewBox="0 0 24 24" focusable="false"><title>Search</title><circle cx="10.5" cy="10.5" r="7.5"></circle><path d="M21 21l-5.2-5.2"></path></svg>
         </a>
-        <a class="btn btn-sm btn-outline-secondary" href="#">Sign up</a>
+        @guest
+        <a class="btn btn-sm btn-outline-secondary" href="/home">Sign up</a>
+        @else
+         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+			@csrf
+         </form>
+         <a href="{{ route('login') }}">{{ Auth::user()->name }}</a> | <a href="{{ route('logout') }}" onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">Logout</a>
+        @endguest
       </div>
     </div>
   </header>
