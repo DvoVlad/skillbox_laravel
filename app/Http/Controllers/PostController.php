@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\{Post,Tag};
 use Illuminate\Support\Facades\Gate;
+use App\Mail\{PostCreated, PostUpdated, PostDeleted};
 
 class PostController extends Controller
 {
@@ -63,6 +64,9 @@ class PostController extends Controller
 					$post->tags()->attach($tag);
 				}
 			}
+			\Mail::to(config('myMails.admin_email'))->send(
+				new PostCreated($v["name"], '/posts/' . $v["slug"])
+			);
 			return back()->with('success','Статья успешно создана');
 		} else {
 			return "Вы не авторизованы поэтому не можете писать статьи!";
@@ -124,6 +128,9 @@ class PostController extends Controller
 					$post->tags()->attach($tag);
 				}
 			}
+			\Mail::to(config('myMails.admin_email'))->send(
+				new PostUpdated($v["name"], '/posts/' . $v["slug"])
+			);
 			return back()->with('success','Статья успешно обновлена');
 		} else {
 			return "У вас нет прав на редактирование статьи";
@@ -138,8 +145,12 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+		$deletedName = $post->name;
 		if(Gate::authorize('edit', $post)){
 			$post->delete();
+			\Mail::to(config('myMails.admin_email'))->send(
+				new PostDeleted($deletedName)
+			);
 			return back()->with('success','Статья успешно удалена');
 		} else {
 			return "Только владелец статьи может её удалить!";
