@@ -37,7 +37,7 @@ class PostController extends Controller
 			$tags = Tag::all();
 			return view("post.post_create", ['tags' => $tags]);
 		} else {
-			return back()->with("Вы не авторизованы поэтому не можете писать статьи!");
+			return back()->with('success', "Вы не авторизованы поэтому не можете писать статьи!");
 		}
     }
 
@@ -67,9 +67,9 @@ class PostController extends Controller
 			\Mail::to(config('myMails.admin_email'))->send(
 				new PostCreated($v["name"], '/posts/' . $v["slug"])
 			);
-			return back()->with('success','Статья успешно создана');
+			return back()->with('success', 'Статья успешно создана');
 		} else {
-			return back()->with("Вы не авторизованы поэтому не можете писать статьи!");
+			return back()->with('success', "Вы не авторизованы поэтому не можете писать статьи!");
 		}
     }
 
@@ -98,7 +98,7 @@ class PostController extends Controller
 			$tags = Tag::all();
 			return view("post.post_update", ['post' => $post, 'tags' => $tags]);
 		} else {
-			return back()->with("У вас нет прав на редактирование статьи");
+			return back()->with('success',"У вас нет прав на редактирование статьи");
 		}
     }
 
@@ -131,7 +131,7 @@ class PostController extends Controller
 			);
 			return back()->with('success','Статья успешно обновлена');
 		} else {
-			return back()->with("У вас нет прав на редактирование статьи");
+			return back()->with('success',"У вас нет прав на редактирование статьи");
 		}
     }
 
@@ -151,7 +151,7 @@ class PostController extends Controller
 			);
 			return back()->with('success','Статья успешно удалена');
 		} else {
-			return back()->with("Только владелец статьи может её удалить!");
+			return back()->with('success', "Только владелец статьи может её удалить!");
 		}
     }
 }
