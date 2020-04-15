@@ -33,11 +33,11 @@ class PostController extends Controller
      */
     public function create()
     {
-		if(Gate::authorize('create')){
+		if(Gate::authorize('createPost')){
 			$tags = Tag::all();
-			return view("post_create", ['tags' => $tags]);
+			return view("post.post_create", ['tags' => $tags]);
 		} else {
-			return "Вы не авторизованы поэтому не можете писать статьи!";
+			return back()->with("Вы не авторизованы поэтому не можете писать статьи!");
 		}
     }
 
@@ -49,7 +49,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-		if(Gate::authorize('create')){
+		if(Gate::authorize('createPost')){
 			$v = $request->validate([
 				'name' => 'required|min:5|max:100',
 				'slug' => 'required|alpha_dash|unique:posts',
@@ -69,7 +69,7 @@ class PostController extends Controller
 			);
 			return back()->with('success','Статья успешно создана');
 		} else {
-			return "Вы не авторизованы поэтому не можете писать статьи!";
+			return back()->with("Вы не авторизованы поэтому не можете писать статьи!");
 		}
     }
 
@@ -82,9 +82,7 @@ class PostController extends Controller
     public function show(Post $post)
     {
 		if ($post->publish == 1) {
-			return view('detailed_post', ['post' => $post, 'title' => $post->name]);
-		} else {
-			return $post->slug;
+			return view('post.detailed_post', ['post' => $post, 'title' => $post->name]);
 		}
     }
 
@@ -96,11 +94,11 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-		if(Gate::authorize('edit', $post)){
+		if(Gate::authorize('editPost', $post)){
 			$tags = Tag::all();
-			return view("post_update", ['post' => $post, 'tags' => $tags]);
+			return view("post.post_update", ['post' => $post, 'tags' => $tags]);
 		} else {
-			return "У вас нет прав на редактирование статьи";
+			return back()->with("У вас нет прав на редактирование статьи");
 		}
     }
 
@@ -113,7 +111,7 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-		if(Gate::authorize('edit', $post)){
+		if(Gate::authorize('editPost', $post)){
 			$v = $request->validate([
 				'name' => 'required|min:5|max:100',
 				'slug' => 'required|alpha_dash|unique:posts,id,' . $post->id,
@@ -133,7 +131,7 @@ class PostController extends Controller
 			);
 			return back()->with('success','Статья успешно обновлена');
 		} else {
-			return "У вас нет прав на редактирование статьи";
+			return back()->with("У вас нет прав на редактирование статьи");
 		}
     }
 
@@ -146,14 +144,14 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
 		$deletedName = $post->name;
-		if(Gate::authorize('edit', $post)){
+		if(Gate::authorize('editPost', $post)){
 			$post->delete();
 			\Mail::to(config('myMails.admin_email'))->send(
 				new PostDeleted($deletedName)
 			);
 			return back()->with('success','Статья успешно удалена');
 		} else {
-			return "Только владелец статьи может её удалить!";
+			return back()->with("Только владелец статьи может её удалить!");
 		}
     }
 }

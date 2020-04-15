@@ -4,7 +4,7 @@
 @endsection
 @section('content')
 <h3>Создать статью</h3>
-<form id="create-form" action="/posts/create" method="post">
+<form id="create-form" action="/posts" method="post">
 	@csrf
 	@include('layouts.validate')
 	<div class="form-group">

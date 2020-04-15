@@ -4,7 +4,7 @@
 @endsection
 @section('content')
 <h3>Редактировать статью</h3>
-<form id="create-form" action="/posts/{{$post->slug}}/update" method="post">
+<form id="create-form" action="/posts/{{$post->slug}}" method="post">
 	@method("PATCH")
 	@csrf
 	@include('layouts.validate')
