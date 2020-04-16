@@ -34,5 +34,3 @@ Route::post('/tags/create', "TagController@store")->middleware('auth');;
 Route::get('/tag/{id}/posts', "PostController@indexTags");
 
 Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');

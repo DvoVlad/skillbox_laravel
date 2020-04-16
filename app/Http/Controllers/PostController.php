@@ -41,6 +41,36 @@ class PostController extends Controller
 		}
     }
 
+	private function validateForm($create, $request, $post)
+	{
+		if($create == true) {
+			$v = $request->validate([
+				'name' => 'required|min:5|max:100',
+				'slug' => 'required|alpha_dash|unique:posts',
+				'anonce' => 'required|max:255',
+				'content' => 'required',
+			]);
+		} else {
+			$v = $request->validate([
+				'name' => 'required|min:5|max:100',
+				'slug' => 'required|alpha_dash|unique:posts,id,' . $post->id,
+				'anonce' => 'required|max:255',
+				'content' => 'required',
+			]);
+		}
+		$v["publish"] = $request->publish;
+		return $v;
+	}
+
+	private function createTags($post)
+	{
+		if(!empty($request->tags)){
+			foreach ($request->tags as $tag) {
+				$post->tags()->attach($tag);
+			}
+		}
+	}
+
     /**
      * Store a newly created resource in storage.
      *
@@ -50,22 +80,11 @@ class PostController extends Controller
     public function store(Request $request)
     {
 		if(Gate::authorize('createPost')){
-			$v = $request->validate([
-				'name' => 'required|min:5|max:100',
-				'slug' => 'required|alpha_dash|unique:posts',
-				'anonce' => 'required|max:255',
-				'content' => 'required',
-			]);
-			$v["publish"] = $request->publish;
-			$v["user_id"] = $request->user_id;
+			$v = $this->validateForm(true, $request, $post);
 			$post = Post::create($v);
-			if(!empty($request->tags)){
-				foreach ($request->tags as $tag) {
-					$post->tags()->attach($tag);
-				}
-			}
+			$this->createTags($post);
 			\Mail::to(config('myMails.admin_email'))->send(
-				new PostCreated($v["name"], '/posts/' . $v["slug"])
+				new PostCreated($v["name"], url("/posts/{$v["slug"]}"))
 			);
 			return back()->with('success', 'Статья успешно создана');
 		} else {
@@ -112,22 +131,12 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
 		if(Gate::authorize('editPost', $post)){
-			$v = $request->validate([
-				'name' => 'required|min:5|max:100',
-				'slug' => 'required|alpha_dash|unique:posts,id,' . $post->id,
-				'anonce' => 'required|max:255',
-				'content' => 'required',
-			]);
-			$v["publish"] = $request->publish;
+			$v = $this->validateForm(false, $request, $post);
 			$post->update($v);
 			$post->tags()->detach();
-			if(!empty($request->tags)){
-				foreach ($request->tags as $tag) {
-					$post->tags()->attach($tag);
-				}
-			}
+			$this->createTags($post);
 			\Mail::to(config('myMails.admin_email'))->send(
-				new PostUpdated($v["name"], '/posts/' . $v["slug"])
+				new PostUpdated($v["name"], url("/posts/{$v["slug"]}"))
 			);
 			return back()->with('success','Статья успешно обновлена');
 		} else {
