@@ -8,12 +8,23 @@
       <h3 class="pb-4 mb-4 font-italic border-bottom">
         From the Firehose
       </h3>
+      @include('layouts.validate')
 	@if($posts)
 		@foreach($posts as $post)
       <div class="blog-post">
         <h2 class="blog-post-title"><a href="posts/{{$post->slug}}">{{$post->name}}</a></h2>
         <p class="blog-post-meta">{{$post->created_at}}</p>
 		<p>{{$post->anonce}}</p>
+		<p>
+			<b>Теги:</b>
+			@foreach($post->tags as $tag)
+				<a href="/tag/{{$tag->id}}/posts" class="badge badge-secondary">{{$tag->name}}</a>
+			@endforeach
+		</p>
+		@can('editPost', $post)
+		<a href="/posts/{{$post->slug}}/edit">Редактировать</a>
+		<form method="post" action="/posts/{{$post->slug}}">@csrf @method("DELETE") <input type="submit" class="btn btn-danger" value="Удалить"></form>
+		@endcan
       </div><!-- /.blog-post -->
 		@endforeach
 	@endif
@@ -26,37 +37,13 @@
     </div><!-- /.blog-main -->
 
     <aside class="col-md-4 blog-sidebar">
-      <div class="p-4 mb-3 bg-light rounded">
-        <h4 class="font-italic">About</h4>
-        <p class="mb-0">Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
-      </div>
-
-      <div class="p-4">
-        <h4 class="font-italic">Archives</h4>
-        <ol class="list-unstyled mb-0">
-          <li><a href="#">March 2014</a></li>
-          <li><a href="#">February 2014</a></li>
-          <li><a href="#">January 2014</a></li>
-          <li><a href="#">December 2013</a></li>
-          <li><a href="#">November 2013</a></li>
-          <li><a href="#">October 2013</a></li>
-          <li><a href="#">September 2013</a></li>
-          <li><a href="#">August 2013</a></li>
-          <li><a href="#">July 2013</a></li>
-          <li><a href="#">June 2013</a></li>
-          <li><a href="#">May 2013</a></li>
-          <li><a href="#">April 2013</a></li>
-        </ol>
-      </div>
-
-      <div class="p-4">
-        <h4 class="font-italic">Elsewhere</h4>
-        <ol class="list-unstyled">
-          <li><a href="#">GitHub</a></li>
-          <li><a href="#">Twitter</a></li>
-          <li><a href="#">Facebook</a></li>
-        </ol>
-      </div>
+     <!-- Облако тегов -->
+     <h3>Облако тегов</h3>
+     @if($tags)
+		@foreach($tags as $tag)
+		<a href="/tag/{{$tag->id}}/posts" class="badge badge-secondary">{{$tag->name}}</a>
+		@endforeach
+     @endif
     </aside><!-- /.blog-sidebar -->
 
   </div><!-- /.row -->

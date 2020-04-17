@@ -19,14 +19,18 @@ Route::get('/', "PostController@index");
 
 Route::view('/about', "about");
 
+Route::resource('posts', 'PostController');
+
 Route::get('/contacts', "FeedbackController@create");
 
 Route::post('/contacts', "FeedbackController@store");
 
-Route::get('/posts/create', "PostController@create");
+Route::get('/admin/feedbacks', "FeedbackController@index")->middleware('auth');;
 
-Route::post('/posts/create', "PostController@store");
+Route::get('/tags/create', "TagController@create")->middleware('auth');;
 
-Route::get('/posts/{post}', "PostController@show");
+Route::post('/tags/create', "TagController@store")->middleware('auth');;
 
-Route::get('/admin/feedbacks', "FeedbackController@index");
+Route::get('/tag/{id}/posts', "PostController@indexTags");
+
+Auth::routes();
