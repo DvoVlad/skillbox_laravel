@@ -1,6 +1,6 @@
 @extends('layouts.main_template')
 @section('title')
-Главная - статьи
+Список статей - Админ панель
 @endsection
 @section('content')
 <div class="row">
@@ -21,14 +21,8 @@
 				<a href="/tag/{{$tag->id}}/posts" class="badge badge-secondary">{{$tag->name}}</a>
 			@endforeach
 		</p>
-		@can('editPost', $post)
-			@admin
-				<a href="/admin/posts/{{$post->slug}}/edit">Редактировать</a>
-			@else
-				<a href="/posts/{{$post->slug}}/edit">Редактировать</a>
-			@endadmin
-				<form method="post" action="/posts/{{$post->slug}}">@csrf @method("DELETE") <input type="submit" class="btn btn-danger" value="Удалить"></form>
-		@endcan
+		<a href="/admin/posts/{{$post->slug}}/edit">Редактировать</a>
+		<form method="post" action="/posts/{{$post->slug}}">@csrf @method("DELETE") <input type="submit" class="btn btn-danger" value="Удалить"></form>
       </div><!-- /.blog-post -->
 		@endforeach
 	@endif

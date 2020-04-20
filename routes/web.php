@@ -19,17 +19,21 @@ Route::get('/', "PostController@index");
 
 Route::view('/about', "about");
 
-Route::resource('posts', 'PostController');
+Route::resource('posts', "PostController");
 
 Route::get('/contacts', "FeedbackController@create");
 
 Route::post('/contacts', "FeedbackController@store");
 
-Route::get('/admin/feedbacks', "FeedbackController@index")->middleware('auth');;
+Route::get('/admin/feedbacks', "FeedbackController@index")->middleware('auth');
 
-Route::get('/tags/create', "TagController@create")->middleware('auth');;
+Route::get('/admin/articles', "PostController@admin");
 
-Route::post('/tags/create', "TagController@store")->middleware('auth');;
+Route::get('/admin/posts/{post}/edit', "PostController@adminEdit");
+
+Route::get('/tags/create', "TagController@create")->middleware('auth');
+
+Route::post('/tags/create', "TagController@store")->middleware('auth');
 
 Route::get('/tag/{id}/posts', "PostController@indexTags");
 
