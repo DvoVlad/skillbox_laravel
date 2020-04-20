@@ -24,8 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
-        $schedule->command('php artisan my:send-created-articles 2020-04-19 2020-04-21'))->weekly()->mondays()->at('23:00');
+        //$schedule->command('inspire')->hourly();
+        $schedule->command('php artisan my:send-created-articles 2020-04-19 2020-04-21')->weekly()->mondays()->at('23:00');
     }
 
     /**
