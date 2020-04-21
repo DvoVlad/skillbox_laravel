@@ -37,4 +37,7 @@ Route::post('/tags/create', "TagController@store")->middleware('auth');
 
 Route::get('/tag/{id}/posts', "PostController@indexTags");
 
+Route::get('/service', "PushServiceController@form");
+Route::post('/service', "PushServiceController@send");
+
 Auth::routes();
