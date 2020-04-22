@@ -25,7 +25,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         //$schedule->command('inspire')->hourly();
-        $schedule->command('php artisan my:send-created-articles 2020-04-19 2020-04-21')->weekly()->mondays()->at('23:00');
+        $weekAgo = date("Y-M-d", mktime(0, 0, 0, date('m'), date('d') - 7, date('Y')));
+        $now = date("Y-M-d", mktime(0, 0, 0, date('m'), date('d'), date('Y')));
+        $schedule->command("php artisan my:send-created-articles {$weekAgo} {$now}")->weekly()->mondays()->at('23:00');
     }
 
     /**

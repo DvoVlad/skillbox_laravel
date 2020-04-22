@@ -37,11 +37,7 @@
     <aside class="col-md-4 blog-sidebar">
      <!-- Облако тегов -->
      <h3>Облако тегов</h3>
-     @if($tags)
-		@foreach($tags as $tag)
-		<a href="/tag/{{$tag->id}}/posts" class="badge badge-secondary">{{$tag->name}}</a>
-		@endforeach
-     @endif
+     @include('layouts.allTags')
     </aside><!-- /.blog-sidebar -->
 
   </div><!-- /.row -->

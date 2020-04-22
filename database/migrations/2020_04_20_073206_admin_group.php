@@ -24,6 +24,6 @@ class AdminGroup extends Migration
      */
     public function down()
     {
-        //
+        Group::truncate();
     }
 }

@@ -24,28 +24,24 @@ class AuthServiceProvider extends ServiceProvider
      * @return void
      */
      
+    private function userGroups()
+    {
+		return auth()->user()->groups->pluck("name")->all();
+	} 
+     
     public function boot()
     {
         $this->registerPolicies();
 		Gate::define('admin', function($user) {
-			$arrGroups = [];
-			foreach($user->groups as $group) {
-				$arrGroups[] = $group['name'];
-			}
+			$arrGroups = $this->userGroups();
 			return in_array('admin', $arrGroups);
 		});
 		Gate::define('createPost', function($user) {
-			$arrGroups = [];
-			foreach($user->groups as $group) {
-				$arrGroups[] = $group['name'];
-			}
+			$arrGroups = $this->userGroups();
 			return $user->id > 0 || in_array('admin', $arrGroups);
 		});
         Gate::define('editPost', function ($user, Post $post) {
-			$arrGroups = [];
-			foreach($user->groups as $group) {
-				$arrGroups[] = $group['name'];
-			}
+			$arrGroups = $this->userGroups();
 			return $user->id == $post->user_id || in_array('admin', $arrGroups);
 		});
     }

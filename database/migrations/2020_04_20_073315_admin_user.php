@@ -25,6 +25,6 @@ class AdminUser extends Migration
      */
     public function down()
     {
-        //
+        User::find(1)->delete();
     }
 }
