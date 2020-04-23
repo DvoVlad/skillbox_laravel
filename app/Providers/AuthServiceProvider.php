@@ -23,15 +23,18 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @return void
      */
+     
     public function boot()
     {
         $this->registerPolicies();
-
+		Gate::define('admin', function($user) {
+			return auth()->user()->isAdmin();
+		});
 		Gate::define('createPost', function($user) {
-			return $user->id > 0;
+			return $user->id > 0 || auth()->user()->isAdmin();
 		});
         Gate::define('editPost', function ($user, Post $post) {
-			return $user->id == $post->user_id;
+			return $user->id == $post->user_id || auth()->user()->isAdmin();;
 		});
     }
 }

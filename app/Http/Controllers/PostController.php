@@ -8,6 +8,23 @@ use App\Mail\{PostCreated, PostUpdated, PostDeleted};
 
 class PostController extends Controller
 {
+	public function adminEdit(Post $post)
+    {
+		if(! Gate::authorize('admin', $post)){
+			return back()->with('errors', "У вас нет прав для входа в админ раздел.");
+		}
+		return view("post.admin_post_update", ['post' => $post]);
+    }
+    
+	public function admin()
+	{
+		if(! Gate::authorize('admin')){
+			return back()->with('errors',"У вас нет прав для входа в админ раздел.");
+		}
+		$posts = Post::all();
+        return view('admin_articles', ['posts' => $posts]);
+	}
+	
 	public function indexTags($id)
 	{
 		$posts = Tag::find($id)->posts->where("publish", "=", 1);
@@ -37,13 +54,14 @@ class PostController extends Controller
 		return view("post.post_create");
     }
 
-	private function validateForm($create, $request, $post)
+	private function validateForm($create, $request, $post=null)
 	{
 		$validate = [
 			'name' => 'required|min:5|max:100',
 			'anonce' => 'required|max:255',
 			'content' => 'required',
-			'publish' => ''
+			'publish' => '',
+			'user_id' => ''
 		];
 		if($create) {
 			$validate['slug'] = 'required|alpha_dash|unique:posts';
@@ -75,7 +93,7 @@ class PostController extends Controller
 		if(! Gate::authorize('createPost')){
 			return back()->with('errors', "Вы не авторизованы поэтому не можете писать статьи!");
 		}
-		$v = $this->validateForm(true, $request, $post);
+		$v = $this->validateForm(true, $request);
 		$post = Post::create($v);
 		$this->createTags($post, $request);
 		\Mail::to(config('myMails.admin_email'))->send(

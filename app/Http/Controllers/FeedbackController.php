@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\Feedback;
 
 class FeedbackController extends Controller
@@ -13,8 +14,12 @@ class FeedbackController extends Controller
      */
     public function index()
     {
+		if(! Gate::authorize('admin')){
+			return back()->with('errors',"У вас нет прав для входа в админ раздел.");
+		}
 		$feedbacks = Feedback::latest()->get();
         return view('admin_feedbacks', ['feedbacks' => $feedbacks]);
+        
     }
 
     /**

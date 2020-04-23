@@ -36,4 +36,20 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    
+    public function groups()
+    {
+		return $this->belongsToMany('App\Group');
+	}
+	
+	public function posts()
+	{
+		return $this->hasMany('App\Post');
+	}
+	
+	public function isAdmin()
+	{
+		$arrGroups = $this->groups->pluck("name")->all();
+		return in_array('admin', $arrGroups);
+	}
 }

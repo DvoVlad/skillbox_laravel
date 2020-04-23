@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Blade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,7 +24,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        view()->composer('main', function($view) {
+		Blade::if('admin', function() {
+			return auth()->user()->isAdmin();
+		});
+        view()->composer('layouts.allTags', function($view) {
+			$view->with('tags', \App\Tag::has('posts')->get());
+		});
+		view()->composer('post.admin_post_update', function($view) {
 			$view->with('tags', \App\Tag::all());
 		});
 		view()->composer('post.post_create', function($view) {
