@@ -4,7 +4,7 @@
 @endsection
 @section('content')
 <h3>Создать тег</h3>
-<form id="create-form" action="/tags/create" method="post">
+<form id="create-form" action="{{url('/tags/create')}}" method="post">
 	@csrf
 	@include('layouts.validate')
 	<div class="form-group">

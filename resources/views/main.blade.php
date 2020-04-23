@@ -18,16 +18,16 @@
 		<p>
 			<b>Теги:</b>
 			@foreach($post->tags as $tag)
-				<a href="/tag/{{$tag->id}}/posts" class="badge badge-secondary">{{$tag->name}}</a>
+				<a href="{{url('/tag/'. $tag->id . '/posts')}}" class="badge badge-secondary">{{$tag->name}}</a>
 			@endforeach
 		</p>
 		@can('editPost', $post)
 			@admin
-				<a href="/admin/posts/{{$post->slug}}/edit">Редактировать</a>
+				<a href="{{url('/admin/posts/' . $post->slug . '/edit')}}">Редактировать</a>
 			@else
-				<a href="/posts/{{$post->slug}}/edit">Редактировать</a>
+				<a href="{{url('/posts/'. $post->slug . '/edit')}}">Редактировать</a>
 			@endadmin
-				<form method="post" action="/posts/{{$post->slug}}">@csrf @method("DELETE") <input type="submit" class="btn btn-danger" value="Удалить"></form>
+				<form method="post" action="{{url('/posts/' . $post->slug)}}">@csrf @method("DELETE") <input type="submit" class="btn btn-danger" value="Удалить"></form>
 		@endcan
       </div><!-- /.blog-post -->
 		@endforeach

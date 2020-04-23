@@ -18,11 +18,11 @@
 		<p>
 			<b>Теги:</b>
 			@foreach($post->tags as $tag)
-				<a href="/tag/{{$tag->id}}/posts" class="badge badge-secondary">{{$tag->name}}</a>
+				<a href="{{url('/tag/' . $tag->id . '/posts')}}" class="badge badge-secondary">{{$tag->name}}</a>
 			@endforeach
 		</p>
-		<a href="/admin/posts/{{$post->slug}}/edit">Редактировать</a>
-		<form method="post" action="/posts/{{$post->slug}}">@csrf @method("DELETE") <input type="submit" class="btn btn-danger" value="Удалить"></form>
+		<a href="{{url('/admin/posts/' . $post->slug . '/edit')}}">Редактировать</a>
+		<form method="post" action="{{url('/posts/' . $post->slug)}}">@csrf @method("DELETE") <input type="submit" class="btn btn-danger" value="Удалить"></form>
       </div><!-- /.blog-post -->
 		@endforeach
 	@endif

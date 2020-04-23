@@ -16,12 +16,7 @@ class AppServiceProvider extends ServiceProvider
     {
         //
     }
-	
-	private function userGroups()
-    {
-		return auth()->user()->groups->pluck("name")->all();
-	} 
-	
+
     /**
      * Bootstrap any application services.
      *
@@ -30,8 +25,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
 		Blade::if('admin', function() {
-			$arrGroups = $this->userGroups();
-			return in_array('admin', $arrGroups);
+			return auth()->user()->isAdmin();
 		});
         view()->composer('layouts.allTags', function($view) {
 			$view->with('tags', \App\Tag::has('posts')->get());
