@@ -8,7 +8,10 @@ class Tag extends Model
 {
     protected $fillable = ["name"];
     
-    public function posts() {
-		return $this->belongsToMany('App\Post');
+    public function posts(){
+		return $this->morphedByMany('App\Post', 'tagable');
+	}
+	public function news(){
+		return $this->morphedByMany('App\News', 'tagable');
 	}
 }

@@ -1,6 +1,6 @@
 @extends('layouts.main_template')
 @section('title')
-Главная - статьи
+Главная - новости
 @endsection
 @section('content')
 <div class="row">
@@ -9,30 +9,7 @@
         From the Firehose
       </h3>
       @include('layouts.validate')
-	@if($posts)
-		@foreach($posts as $post)
-      <div class="blog-post">
-        <h2 class="blog-post-title"><a href="posts/{{$post->slug}}">{{$post->name}}</a></h2>
-        <p class="blog-post-meta">{{$post->created_at}}</p>
-		<p>{{$post->anonce}}</p>
-		<p>
-			<b>Теги:</b>
-			@foreach($post->tags as $tag)
-				<a href="{{url('/tag/'. $tag->id . '/posts')}}" class="badge badge-secondary">{{$tag->name}}</a>
-			@endforeach
-		</p>
-		@can('editPost', $post)
-			@admin
-				<a href="{{url('/admin/posts/' . $post->slug . '/edit')}}">Редактировать</a>
-			@else
-				<a href="{{url('/posts/'. $post->slug . '/edit')}}">Редактировать</a>
-			@endadmin
-				<form method="post" action="{{url('/posts/' . $post->slug)}}">@csrf @method("DELETE") <input type="submit" class="btn btn-danger" value="Удалить"></form>
-		@endcan
-      </div><!-- /.blog-post -->
-		@endforeach
-	@endif
-	@if(isset($news))
+	@if($news)
 		@foreach($news as $new)
       <div class="blog-post">
         <h2 class="blog-post-title"><a href="news/{{$new->slug}}">{{$new->name}}</a></h2>
@@ -44,11 +21,11 @@
 				<a href="{{url('/tag/'. $tag->id . '/posts')}}" class="badge badge-secondary">{{$tag->name}}</a>
 			@endforeach
 		</p>
-		@can('editNew', $new)
+		@can('editPost', $new)
 			@admin
-				<a href="{{url('/admin/news/' . $new->slug . '/edit')}}">Редактировать</a>
+				<a href="{{url('/admin/news/' . $post->slug . '/edit')}}">Редактировать</a>
 			@else
-				<a href="{{url('/news/'. $new->slug . '/edit')}}">Редактировать</a>
+				<a href="{{url('/news/'. $news->slug . '/edit')}}">Редактировать</a>
 			@endadmin
 				<form method="post" action="{{url('/news/' . $new->slug)}}">@csrf @method("DELETE") <input type="submit" class="btn btn-danger" value="Удалить"></form>
 		@endcan

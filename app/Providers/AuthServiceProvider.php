@@ -6,6 +6,7 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use Illuminate\Support\Facades\Gate;
 use App\User;
 use App\Post;
+use App\News;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -34,7 +35,13 @@ class AuthServiceProvider extends ServiceProvider
 			return $user->id > 0 || auth()->user()->isAdmin();
 		});
         Gate::define('editPost', function ($user, Post $post) {
-			return $user->id == $post->user_id || auth()->user()->isAdmin();;
+			return $user->id == $post->user_id || auth()->user()->isAdmin();
+		});
+		Gate::define('createNew', function($user) {
+			return $user->id > 0 || auth()->user()->isAdmin();
+		});
+        Gate::define('editNew', function ($user, News $post) {
+			return $user->id == $post->user_id || auth()->user()->isAdmin();
 		});
     }
 }

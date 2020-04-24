@@ -28,7 +28,8 @@ class PostController extends Controller
 	public function indexTags($id)
 	{
 		$posts = Tag::find($id)->posts->where("publish", "=", 1);
-        return view('main', ['posts' => $posts]);
+		$news = Tag::find($id)->news;
+        return view('main', ['posts' => $posts, 'news' => $news]);
 	}
     /**
      * Display a listing of the resource.
