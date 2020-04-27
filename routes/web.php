@@ -15,6 +15,10 @@ use App\Http\Controllers\AboutController;
 |
 */
 
+Route::post('/post/comment', "CommentController@addPostComment");
+
+Route::post('/news/comment', "CommentController@addNewsComment");
+
 Route::get('/', "PostController@index");
 
 Route::view('/about', "about");

@@ -14,8 +14,19 @@ class News extends Model
 	{
 		return 'slug';
 	}
+	
+	public function user(){
+	
+		return $this->belongsTo("App\User");
+	}
+	
     public function tags()
     {
         return $this->morphToMany('App\Tag', 'tagable');
+    }
+    
+    public function comments()
+    {
+        return $this->morphMany('App\Comment', 'commentable');
     }
 }

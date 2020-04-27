@@ -47,6 +47,16 @@ class User extends Authenticatable
 		return $this->hasMany('App\Post');
 	}
 	
+	public function news()
+	{
+		return $this->hasMany('App\News');
+	}
+	
+	public function comments()
+	{
+		return $this->hasMany("App\Comment");
+	}
+	
 	public function isAdmin()
 	{
 		$arrGroups = $this->groups->pluck("name")->all();
