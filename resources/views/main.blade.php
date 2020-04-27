@@ -70,4 +70,9 @@
     </aside><!-- /.blog-sidebar -->
 
   </div><!-- /.row -->
+  <div>
+	  <h2>Статистика</h2>
+	  <p>Общее количество статей {{$countPosts}}</p>
+	  <p>Общее количество новостей {{$countNews}}</p>
+  </div>
 @endsection

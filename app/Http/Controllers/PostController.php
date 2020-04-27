@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\{Post,Tag};
+use App\{Post, Tag, History};
 use Illuminate\Support\Facades\Gate;
 use App\Mail\{PostCreated, PostUpdated, PostDeleted};
+use DB;
 
 class PostController extends Controller
 {
@@ -38,8 +39,10 @@ class PostController extends Controller
      */
     public function index()
     {
+		$countPosts = DB::table('posts')->count();
+		$countNews = DB::table('news')->count();
 		$posts = Post::where("publish", "=", 1)->latest()->get();
-        return view('main', ['posts' => $posts]);
+        return view('main', ['posts' => $posts, 'countPosts' => $countPosts, 'countNews' => $countNews]);
     }
 
     /**
@@ -143,6 +146,25 @@ class PostController extends Controller
 			return back()->with('errors',"У вас нет прав на редактирование статьи");
 		} 
 		$v = $this->validateForm(false, $request, $post);
+		$postHistoryName = $post->name;
+		$postHistoryFieldsChanged = '';
+		if($post->name != $v["name"]) {
+			$postHistoryFieldsChanged .= 'name changed ';
+		}
+		if($post->slug != $v["slug"]) {
+			$postHistoryFieldsChanged .= 'slug changed ';
+		}
+		if($post->anonce != $v["anonce"]) {
+			$postHistoryFieldsChanged .= 'anonce changed ';
+		}
+		if($post->anonce != $v["anonce"]) {
+			$postHistoryFieldsChanged .= 'content changed ';
+		}
+		if((boolean)$post->publish != (boolean)$v["publish"]) {
+			$postHistoryFieldsChanged .= 'publish changed ';
+		}
+		$userHistoryName = auth()->user()->name;
+		$History = History::create(["post" => $postHistoryName, "fields" => $postHistoryFieldsChanged, "user" => $userHistoryName]);
 		$post->update($v);
 		$post->tags()->detach();
 		$this->createTags($post, $request);
