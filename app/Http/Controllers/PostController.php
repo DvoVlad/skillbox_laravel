@@ -146,6 +146,7 @@ class PostController extends Controller
 			return back()->with('errors',"У вас нет прав на редактирование статьи");
 		} 
 		$v = $this->validateForm(false, $request, $post);
+		$postHistoryId = $post->id;
 		$postHistoryName = $post->name;
 		$postHistoryFieldsChanged = '';
 		if($post->name != $v["name"]) {
@@ -164,7 +165,7 @@ class PostController extends Controller
 			$postHistoryFieldsChanged .= 'publish changed ';
 		}
 		$userHistoryName = auth()->user()->name;
-		$History = History::create(["post" => $postHistoryName, "fields" => $postHistoryFieldsChanged, "user" => $userHistoryName]);
+		$History = History::create(["post_id" => $postHistoryId, "post" => $postHistoryName, "fields" => $postHistoryFieldsChanged, "user" => $userHistoryName]);
 		$post->update($v);
 		$post->tags()->detach();
 		$this->createTags($post, $request);
