@@ -39,10 +39,8 @@ class PostController extends Controller
      */
     public function index()
     {
-		$countPosts = DB::table('posts')->count();
-		$countNews = DB::table('news')->count();
 		$posts = Post::where("publish", "=", 1)->latest()->get();
-        return view('main', ['posts' => $posts, 'countPosts' => $countPosts, 'countNews' => $countNews]);
+        return view('main', ['posts' => $posts]);
     }
 
     /**
