@@ -79,5 +79,6 @@
 	  <p>Самая короткая статья <a href="/posts/{{$slugShortestPost}}">{{$nameShortestPost}}</a></p>
 	  <p>Средние количество статей у “активных” пользователей {{$avgPosts}}</p>
 	  <p>Самая непостоянная статья <a href="/posts/{{$changablePostSlug}}">{{$changablePostName}}</a></p>
+	  <p>Самая обсуждаемая статья <a href="/posts/{{$mostCommentablePostSlug}}">{{$mostCommentablePostName}}</a></p>
   </div>
 @endsection

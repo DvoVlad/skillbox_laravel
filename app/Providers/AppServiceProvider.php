@@ -73,6 +73,14 @@ class AppServiceProvider extends ServiceProvider
 				$changablePostName = '';
 				$changablePostSlug = '';
 			}
+			$mostCommentablePostResult = DB::select("SELECT posts.name, posts.slug FROM `comments` LEFT JOIN `posts` ON comments.commentable_id = posts.id GROUP by comments.commentable_id, comments.commentable_type HAVING comments.commentable_type='post' ORDER by COUNT(*) DESC LIMIT 0,1");
+			if (!empty($mostCommentablePostResult)) {
+				$mostCommentablePostName = $mostCommentablePostResult[0]->name;
+				$mostCommentablePostSlug = $mostCommentablePostResult[0]->slug;
+			} else {
+				$mostCommentablePostName = '';
+				$mostCommentablePostSlug = '';
+			}
 			$view->with('countPosts', $countPosts);
 			$view->with('countNews', $countNews);
 			$view->with('morePostsAutor', $morePostsAutor);
@@ -83,7 +91,8 @@ class AppServiceProvider extends ServiceProvider
 			$view->with('avgPosts', $avgPosts);
 			$view->with('changablePostName', $changablePostName);
 			$view->with('changablePostSlug', $changablePostSlug);
-			//$view->with();
+			$view->with('mostCommentablePostName', $mostCommentablePostName);
+			$view->with('mostCommentablePostSlug', $mostCommentablePostSlug);
 		});
         view()->composer('layouts.allTags', function($view) {
 			$view->with('tags', \App\Tag::has('posts')->orHas('news')->get());
