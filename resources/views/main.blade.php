@@ -21,12 +21,14 @@
 				<a href="{{url('/tag/'. $tag->id . '/posts')}}" class="badge badge-secondary">{{$tag->name}}</a>
 			@endforeach
 		</p>
-		@can('editPost', $post)
+		@can('update', $post)
 			@admin
 				<a href="{{url('/admin/posts/' . $post->slug . '/edit')}}">Редактировать</a>
 			@else
 				<a href="{{url('/posts/'. $post->slug . '/edit')}}">Редактировать</a>
 			@endadmin
+		@endcan
+		@can('delete', $post)
 				<form method="post" action="{{url('/posts/' . $post->slug)}}">@csrf @method("DELETE") <input type="submit" class="btn btn-danger" value="Удалить"></form>
 		@endcan
       </div><!-- /.blog-post -->
@@ -44,12 +46,14 @@
 				<a href="{{url('/tag/'. $tag->id . '/posts')}}" class="badge badge-secondary">{{$tag->name}}</a>
 			@endforeach
 		</p>
-		@can('editNew', $new)
+		@can('update', $new)
 			@admin
 				<a href="{{url('/admin/news/' . $new->slug . '/edit')}}">Редактировать</a>
 			@else
 				<a href="{{url('/news/'. $new->slug . '/edit')}}">Редактировать</a>
 			@endadmin
+		@endcan
+		@can('delete', $new)
 				<form method="post" action="{{url('/news/' . $new->slug)}}">@csrf @method("DELETE") <input type="submit" class="btn btn-danger" value="Удалить"></form>
 		@endcan
       </div><!-- /.blog-post -->
@@ -70,15 +74,4 @@
     </aside><!-- /.blog-sidebar -->
 
   </div><!-- /.row -->
-  <div>
-	  <h2>Статистика</h2>
-	  <p>Общее количество статей {{$countPosts}}</p>
-	  <p>Общее количество новостей {{$countNews}}</p>
-	  <p>Автор с наибольшим числом постов {{$morePostsAutor}}</p>
-	  <p>Самая длинная статья <a href="/posts/{{$slugLongestPost}}">{{$nameLongestPost}}</a></p>
-	  <p>Самая короткая статья <a href="/posts/{{$slugShortestPost}}">{{$nameShortestPost}}</a></p>
-	  <p>Средние количество статей у “активных” пользователей {{$avgPosts}}</p>
-	  <p>Самая непостоянная статья <a href="/posts/{{$changablePostSlug}}">{{$changablePostName}}</a></p>
-	  <p>Самая обсуждаемая статья <a href="/posts/{{$mostCommentablePostSlug}}">{{$mostCommentablePostName}}</a></p>
-  </div>
 @endsection

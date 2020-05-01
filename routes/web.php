@@ -23,9 +23,11 @@ Route::get('/', "PostController@index");
 
 Route::view('/about', "about");
 
+Route::view('/stats', "stats");
+
 Route::resource('posts', "PostController");
 
-Route::resource('news', "NewController");
+Route::resource('news', "NewsController");
 
 Route::get('/contacts', "FeedbackController@create");
 
@@ -33,13 +35,13 @@ Route::post('/contacts', "FeedbackController@store");
 
 Route::get('/admin/feedbacks', "FeedbackController@index")->middleware('auth');
 
-Route::get('/admin/articles', "PostController@admin");
+Route::get('/admin/articles', "PostController@admin")->middleware('auth');;
 
-Route::get('/admin/news', "NewController@admin");
+Route::get('/admin/news', "NewsController@admin")->middleware('auth');;
 
-Route::get('/admin/posts/{post}/edit', "PostController@adminEdit");
+Route::get('/admin/posts/{post}/edit', "PostController@adminEdit")->middleware('auth');;
 
-Route::get('/admin/news/{new}/edit', "NewController@adminEdit");
+Route::get('/admin/news/{new}/edit', "NewsController@adminEdit")->middleware('auth');;
 
 Route::get('/tags/create', "TagController@create")->middleware('auth');
 

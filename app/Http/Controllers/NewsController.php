@@ -5,22 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\{News,Tag};
+use App\Service\DataUpdater;
 
-class NewController extends Controller
+class NewsController extends Controller
 {
 	public function adminEdit(News $new)
     {
-		if(! Gate::authorize('admin', $new)){
-			return back()->with('errors', "У вас нет прав для входа в админ раздел.");
-		}
+		Gate::authorize('admin', $new);
 		return view("new.admin_new_update", ['new' => $new]);
     }
     
 	public function admin()
 	{
-		if(! Gate::authorize('admin')){
-			return back()->with('errors',"У вас нет прав для входа в админ раздел.");
-		}
+		Gate::authorize('admin');
 		$news = News::all();
         return view('admin_news', ['news' => $news]);
 	}
@@ -42,9 +39,7 @@ class NewController extends Controller
      */
     public function create()
     {
-        if(! Gate::authorize('createNew')){
-			return back()->with('errors', "Вы не авторизованы поэтому не можете создавать новости!");
-		}
+        $this->authorize("create", 'App\News');
 		return view("new.new_create");
     }
 
@@ -83,9 +78,8 @@ class NewController extends Controller
      */
     public function store(Request $request)
     {
-        if(! Gate::authorize('createNew')){
-			return back()->with('errors', "Вы не авторизованы поэтому не можете писать новости!");
-		}
+		$this->authorize("create", 'App\News');
+        //Gate::authorize('createNew');
 		$v = $this->validateForm(true, $request);
 		$new = News::create($v);
 		$this->createTags($new, $request);
@@ -114,9 +108,8 @@ class NewController extends Controller
      */
     public function edit(News $news)
     {
-       if(! Gate::authorize('editNew', $news)){
-			return back()->with('errors',"У вас нет прав на редактирование новости");
-		}
+		$this->authorize("update", $news);
+		//Gate::authorize('editNew', $news);
 		return view("new.new_update", ['new' => $news]);
     }
 
@@ -127,14 +120,12 @@ class NewController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, News $news)
+    public function update(Request $request, News $news, DataUpdater $dataUpdate)
     {
-        if (! Gate::authorize('editNew', $news)) {
-			return back()->with('errors',"У вас нет прав на редактирование новости");
-		} 
+		$this->authorize("update", $news);
+        //Gate::authorize('editNew', $news)
 		$v = $this->validateForm(false, $request, $news);
-		$news->update($v);
-		$news->tags()->detach();
+		$dataUpdater->update($news, $v);
 		$this->createTags($news, $request);
 		/*\Mail::to(config('myMails.admin_email'))->send(
 			new PostUpdated($v["name"], url("/news/{$v["slug"]}"))
@@ -150,10 +141,9 @@ class NewController extends Controller
      */
     public function destroy(News $news)
     {
+		$this->authorize("update", $news);
         /*$deletedName = $new->name;*/
-		if(! Gate::authorize('editPost', $news)){
-			return back()->with('errors', "Только владелец новости может её удалить!");
-		}
+		//Gate::authorize('editPost', $news)
 		$news->delete();
 		/*\Mail::to(config('myMails.admin_email'))->send(
 			new PostDeleted($deletedName)

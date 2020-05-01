@@ -5,23 +5,21 @@ use Illuminate\Http\Request;
 use App\{Post, Tag, History};
 use Illuminate\Support\Facades\Gate;
 use App\Mail\{PostCreated, PostUpdated, PostDeleted};
+use Illuminate\Support\Facades\Auth;
 use DB;
+use App\Service\DataUpdater;
 
 class PostController extends Controller
 {
 	public function adminEdit(Post $post)
     {
-		if(! Gate::authorize('admin', $post)){
-			return back()->with('errors', "У вас нет прав для входа в админ раздел.");
-		}
+		Gate::authorize('admin');
 		return view("post.admin_post_update", ['post' => $post]);
     }
     
 	public function admin()
 	{
-		if(! Gate::authorize('admin')){
-			return back()->with('errors',"У вас нет прав для входа в админ раздел.");
-		}
+		Gate::authorize('admin');
 		$posts = Post::all();
         return view('admin_articles', ['posts' => $posts]);
 	}
@@ -50,9 +48,8 @@ class PostController extends Controller
      */
     public function create()
     {
-		if(! Gate::authorize('createPost')){
-			return back()->with('errors', "Вы не авторизованы поэтому не можете писать статьи!");
-		}
+		$this->authorize("create", 'App\Post');
+		//Gate::authorize('createPost');
 		return view("post.post_create");
     }
 
@@ -92,9 +89,8 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-		if(! Gate::authorize('createPost')){
-			return back()->with('errors', "Вы не авторизованы поэтому не можете писать статьи!");
-		}
+		$this->authorize("create", 'App\Post');
+		//Gate::authorize('createPost');
 		$v = $this->validateForm(true, $request);
 		$post = Post::create($v);
 		$this->createTags($post, $request);
@@ -125,9 +121,8 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-		if(! Gate::authorize('editPost', $post)){
-			return back()->with('errors',"У вас нет прав на редактирование статьи");
-		}
+		$this->authorize("update", $post);
+		//Gate::authorize('editPost', $post);
 		return view("post.post_update", ['post' => $post]);
     }
 
@@ -138,34 +133,12 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request, Post $post, DataUpdater $dataUpdater)
     {
-		if (! Gate::authorize('editPost', $post)) {
-			return back()->with('errors',"У вас нет прав на редактирование статьи");
-		} 
+		$this->authorize("update", $post);
+		//Gate::authorize('editPost', $post);
 		$v = $this->validateForm(false, $request, $post);
-		$postHistoryId = $post->id;
-		$postHistoryName = $post->name;
-		$postHistoryFieldsChanged = '';
-		if($post->name != $v["name"]) {
-			$postHistoryFieldsChanged .= 'name changed ';
-		}
-		if($post->slug != $v["slug"]) {
-			$postHistoryFieldsChanged .= 'slug changed ';
-		}
-		if($post->anonce != $v["anonce"]) {
-			$postHistoryFieldsChanged .= 'anonce changed ';
-		}
-		if($post->anonce != $v["anonce"]) {
-			$postHistoryFieldsChanged .= 'content changed ';
-		}
-		if((boolean)$post->publish != (boolean)$v["publish"]) {
-			$postHistoryFieldsChanged .= 'publish changed ';
-		}
-		$userHistoryName = auth()->user()->name;
-		$History = History::create(["post_id" => $postHistoryId, "post" => $postHistoryName, "fields" => $postHistoryFieldsChanged, "user" => $userHistoryName]);
-		$post->update($v);
-		$post->tags()->detach();
+		$dataUpdater->update($post, $v);
 		$this->createTags($post, $request);
 		\Mail::to(config('myMails.admin_email'))->send(
 			new PostUpdated($v["name"], url("/posts/{$v["slug"]}"))
@@ -181,10 +154,9 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+		$this->authorize("delete", $post);
+		Gate::authorize('editPost', $post);
 		$deletedName = $post->name;
-		if(! Gate::authorize('editPost', $post)){
-			return back()->with('errors', "Только владелец статьи может её удалить!");
-		}
 		$post->delete();
 		\Mail::to(config('myMails.admin_email'))->send(
 			new PostDeleted($deletedName)

@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use DB;
+use App\{Post, News};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,27 +35,30 @@ class AppServiceProvider extends ServiceProvider
 		Blade::if('admin', function() {
 			return auth()->user()->isAdmin();
 		});
-		view()->composer('main', function($view) {
-			$countPosts = DB::table('posts')->count();
-			$countNews = DB::table('news')->count();
-			$morePostsAutorResult = DB::select("SELECT users.name FROM `posts` LEFT JOIN `users` On posts.user_id = users.id group by user_id order by count(posts.user_id) desc limit 0, 1");
+		view()->composer('stats', function($view) {
+			$countPosts = Post::count();
+			$countNews = News::count();
+			$morePostsAutorResult = DB::table('posts')->leftJoin('users', 'posts.user_id', '=', 'users.id')->select('users.name')->groupBy('user_id')->orderBy(\DB::raw('count(posts.user_id)'), 'desc')->first();
+			//$morePostsAutorResult = DB::select("SELECT users.name FROM `posts` LEFT JOIN `users` On posts.user_id = users.id group by user_id order by count(posts.user_id) desc limit 0, 1");
 			if (!empty($morePostsAutorResult)) {
-				$morePostsAutor = $morePostsAutorResult[0]->name;
+				$morePostsAutor = $morePostsAutorResult->name;
 			} else {
 				$morePostsAutor = '';
 			}
-			$nameLongestPostResult = DB::select("select name, slug From posts WHERE LENGTH(content) = (SELECT max(LENGTH(content)) FROM posts)");
+			$nameLongestPostResult = DB::table('posts')->select('name','slug')->where(\DB::raw('LENGTH(content)'), "=", \DB::raw('(SELECT max(LENGTH(content)) FROM posts)'))->first();
+			//$nameLongestPostResult = DB::select("select name, slug From posts WHERE LENGTH(content) = (SELECT max(LENGTH(content)) FROM posts)");
 			if (!empty($nameLongestPostResult)) {
-				$nameLongestPost = $nameLongestPostResult[0]->name;
-				$slugLongestPost = $nameLongestPostResult[0]->slug;
+				$nameLongestPost = $nameLongestPostResult->name;
+				$slugLongestPost = $nameLongestPostResult->slug;
 			} else {
 				$nameLongestPost = '';
 				$slugLongestPost = '';
 			}
-			$nameShortestPostResult = DB::select("select name, slug From posts WHERE LENGTH(content) = (SELECT min(LENGTH(content)) FROM posts)");
+			$nameShortestPostResult = DB::table('posts')->select('name','slug')->where(\DB::raw('LENGTH(content)'), "=", \DB::raw('(SELECT min(LENGTH(content)) FROM posts)'))->first();
+			//$nameShortestPostResult = DB::select("select name, slug From posts WHERE LENGTH(content) = (SELECT min(LENGTH(content)) FROM posts)");
 			if (!empty($nameLongestPostResult)) {
-				$nameShortestPost = $nameShortestPostResult[0]->name;
-				$slugShortestPost = $nameShortestPostResult[0]->slug;
+				$nameShortestPost = $nameShortestPostResult->name;
+				$slugShortestPost = $nameShortestPostResult->slug;
 			} else {
 				$nameShortestPost = '';
 				$slugShortestPost = '';
@@ -65,9 +69,9 @@ class AppServiceProvider extends ServiceProvider
 			} else {
 				$avgPosts = '';
 			}
-			$changablePostResult = DB::select("SELECT DISTINCT histories.post, posts.slug FROM `histories` Left Join `posts` ON histories.post = posts.name WHERE post_id = (SELECT post_id FROM `histories` GROUP BY post_id ORDER BY count(*) DESC LIMIT 0, 1)");
+			$changablePostResult = DB::select("SELECT DISTINCT posts.name as name, posts.slug as slug FROM `post_histories` Left Join `posts` ON post_histories.post_id = posts.id WHERE post_id = (SELECT post_id FROM `post_histories` GROUP BY post_id ORDER BY count(*) DESC LIMIT 0, 1);");
 			if (!empty($changablePostResult)) {
-				$changablePostName = $changablePostResult[0]->post;
+				$changablePostName = $changablePostResult[0]->name;
 				$changablePostSlug = $changablePostResult[0]->slug;
 			} else {
 				$changablePostName = '';

@@ -21,12 +21,14 @@
 				<a href="{{url('/tag/'. $tag->id . '/posts')}}" class="badge badge-secondary">{{$tag->name}}</a>
 			@endforeach
 		</p>
-		@can('editNew', $new)
+		@can('update', $new)
 			@admin
 				<a href="{{url('/admin/news/' . $new->slug . '/edit')}}">Редактировать</a>
 			@else
 				<a href="{{url('/news/'. $news->slug . '/edit')}}">Редактировать</a>
 			@endadmin
+		@endcan
+		@can('delete', $new)
 				<form method="post" action="{{url('/news/' . $new->slug)}}">@csrf @method("DELETE") <input type="submit" class="btn btn-danger" value="Удалить"></form>
 		@endcan
       </div><!-- /.blog-post -->
