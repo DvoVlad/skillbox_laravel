@@ -120,7 +120,7 @@ class NewsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, News $news, DataUpdater $dataUpdate)
+    public function update(Request $request, News $news, ModelDataUpdater $dataUpdate)
     {
 		$this->authorize("update", $news);
         //Gate::authorize('editNew', $news)

@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-class DataUpdater
+class ModelDataUpdater
 {
 	public function update($data, $v)
 	{

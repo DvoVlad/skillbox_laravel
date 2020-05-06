@@ -23,7 +23,7 @@ Route::get('/', "PostController@index");
 
 Route::view('/about', "about");
 
-Route::view('/stats', "stats");
+Route::get('/stats', "StatsController@index");
 
 Route::resource('posts', "PostController");
 

@@ -12,7 +12,7 @@
 	@if($posts)
 		@foreach($posts as $post)
       <div class="blog-post">
-        <h2 class="blog-post-title"><a href="/posts/{{$post->slug}}">{{$post->name}}</a></h2>
+        <h2 class="blog-post-title"><a href="{{url('/posts/' . $post->slug)}}">{{$post->name}}</a></h2>
         <p class="blog-post-meta">{{$post->created_at}}</p>
 		<p>{{$post->anonce}}</p>
 		<p>

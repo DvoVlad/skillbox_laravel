@@ -133,7 +133,7 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post, DataUpdater $dataUpdater)
+    public function update(Request $request, Post $post, ModelDataUpdater $dataUpdater)
     {
 		$this->authorize("update", $post);
 		//Gate::authorize('editPost', $post);
