@@ -38,23 +38,5 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('layouts.allTags', function($view) {
 			$view->with('tags', \App\Tag::has('posts')->orHas('news')->get());
 		});
-		view()->composer('post.admin_post_update', function($view) {
-			$view->with('tags', \App\Tag::all());
-		});
-		view()->composer('post.post_create', function($view) {
-			$view->with('tags', \App\Tag::all());
-		});
-		view()->composer('post.post_update', function($view) {
-			$view->with('tags', \App\Tag::all());
-		});
-		view()->composer('new.admin_new_update', function($view) {
-			$view->with('tags', \App\Tag::all());
-		});
-		view()->composer('new.new_create', function($view) {
-			$view->with('tags', \App\Tag::all());
-		});
-		view()->composer('new.new_update', function($view) {
-			$view->with('tags', \App\Tag::all());
-		});
     }
 }

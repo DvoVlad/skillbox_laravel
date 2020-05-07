@@ -12,7 +12,7 @@ class NewsController extends Controller
 	public function adminEdit(News $new)
     {
 		Gate::authorize('admin', $new);
-		return view("new.admin_new_update", ['new' => $new]);
+		return view("new.admin_new_update", ['new' => $new, 'tags' => Tag::all()]);
     }
     
 	public function admin()
@@ -40,7 +40,7 @@ class NewsController extends Controller
     public function create()
     {
         $this->authorize("create", 'App\News');
-		return view("new.new_create");
+		return view("new.new_create", ['tags' => Tag::all()]);
     }
 
 	private function validateForm($create, $request, $news=null)
@@ -51,13 +51,11 @@ class NewsController extends Controller
 			'content' => 'required',
 			'user_id' => ''
 		];
-		if($create) {
-			$validate['slug'] = 'required|alpha_dash|unique:news';
-			$v = $request->validate($validate);
-		} else {
-			$validate['slug'] = 'required|alpha_dash|unique:news,id,' . $news->id;
-			$v = $request->validate($validate);
+		$validate['slug'] = 'required|alpha_dash|unique:news';
+		if(!$create) {
+			$validate['slug'] = $validate['slug'] . ',' . $news->id;
 		}
+		$v = $request->validate($validate);
 		return $v;
 	}
 
@@ -110,7 +108,7 @@ class NewsController extends Controller
     {
 		$this->authorize("update", $news);
 		//Gate::authorize('editNew', $news);
-		return view("new.new_update", ['new' => $news]);
+		return view("new.new_update", ['new' => $news, 'tags' => Tag::all()]);
     }
 
     /**
@@ -120,12 +118,13 @@ class NewsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, News $news, ModelDataUpdater $dataUpdate)
+    public function update(Request $request, News $news)
     {
 		$this->authorize("update", $news);
         //Gate::authorize('editNew', $news)
 		$v = $this->validateForm(false, $request, $news);
-		$dataUpdater->update($news, $v);
+		$news->update($v);
+		$news->tags()->detach();
 		$this->createTags($news, $request);
 		/*\Mail::to(config('myMails.admin_email'))->send(
 			new PostUpdated($v["name"], url("/news/{$v["slug"]}"))

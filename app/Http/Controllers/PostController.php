@@ -14,7 +14,7 @@ class PostController extends Controller
 	public function adminEdit(Post $post)
     {
 		Gate::authorize('admin');
-		return view("post.admin_post_update", ['post' => $post]);
+		return view("post.admin_post_update", ['post' => $post, 'tags' => Tag::all()]);
     }
     
 	public function admin()
@@ -50,7 +50,7 @@ class PostController extends Controller
     {
 		$this->authorize("create", 'App\Post');
 		//Gate::authorize('createPost');
-		return view("post.post_create");
+		return view("post.post_create", ['tags' => Tag::all()]);
     }
 
 	private function validateForm($create, $request, $post=null)
@@ -62,13 +62,11 @@ class PostController extends Controller
 			'publish' => '',
 			'user_id' => ''
 		];
-		if($create) {
-			$validate['slug'] = 'required|alpha_dash|unique:posts';
-			$v = $request->validate($validate);
-		} else {
-			$validate['slug'] = 'required|alpha_dash|unique:posts,id,' . $post->id;
-			$v = $request->validate($validate);
+		$validate['slug'] = 'required|alpha_dash|unique:posts';
+		if(!$create) {
+			$validate['slug'] = $validate['slug'] . ',' . $post->id;
 		}
+		$v = $request->validate($validate);
 		return $v;
 	}
 
@@ -123,7 +121,7 @@ class PostController extends Controller
     {
 		$this->authorize("update", $post);
 		//Gate::authorize('editPost', $post);
-		return view("post.post_update", ['post' => $post]);
+		return view("post.post_update", ['post' => $post, 'tags' => Tag::all()]);
     }
 
     /**
@@ -133,12 +131,13 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post, ModelDataUpdater $dataUpdater)
+    public function update(Request $request, Post $post)
     {
 		$this->authorize("update", $post);
 		//Gate::authorize('editPost', $post);
 		$v = $this->validateForm(false, $request, $post);
-		$dataUpdater->update($post, $v);
+		$post->update($v);
+		$post->tags()->detach();
 		$this->createTags($post, $request);
 		\Mail::to(config('myMails.admin_email'))->send(
 			new PostUpdated($v["name"], url("/posts/{$v["slug"]}"))
