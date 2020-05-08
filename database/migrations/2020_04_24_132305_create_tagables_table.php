@@ -3,9 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Group;
 
-class AdminGroup extends Migration
+class CreateTagablesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +13,12 @@ class AdminGroup extends Migration
      */
     public function up()
     {
-         Group::create(['name' => 'admin']);
+        Schema::create('tagables', function (Blueprint $table) {
+            $table->bigInteger("tag_id");
+            $table->bigInteger("tagable_id")->nullable();
+            $table->string("tagable_type");
+            $table->timestamps();
+        });
     }
 
     /**
@@ -24,6 +28,6 @@ class AdminGroup extends Migration
      */
     public function down()
     {
-        Group::where("name","=","admin")->delete();
+        Schema::dropIfExists('tagables');
     }
 }

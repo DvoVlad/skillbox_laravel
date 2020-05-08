@@ -6,6 +6,8 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use Illuminate\Support\Facades\Gate;
 use App\User;
 use App\Post;
+use App\News;
+use App\Policies\PostPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -16,6 +18,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Model' => 'App\Policies\ModelPolicy',
+        App\Post::class => App\Policies\PostPolicy::class,
+        App\News::class => App\Policies\NewsPolicy::class
     ];
 
     /**
@@ -30,11 +34,17 @@ class AuthServiceProvider extends ServiceProvider
 		Gate::define('admin', function($user) {
 			return auth()->user()->isAdmin();
 		});
-		Gate::define('createPost', function($user) {
+		/*Gate::define('createPost', function($user) {
 			return $user->id > 0 || auth()->user()->isAdmin();
 		});
         Gate::define('editPost', function ($user, Post $post) {
-			return $user->id == $post->user_id || auth()->user()->isAdmin();;
+			return $user->id == $post->user_id || auth()->user()->isAdmin();
 		});
+		Gate::define('createNew', function($user) {
+			return $user->id > 0 || auth()->user()->isAdmin();
+		});
+        Gate::define('editNew', function ($user, News $post) {
+			return $user->id == $post->user_id || auth()->user()->isAdmin();
+		});*/
     }
 }

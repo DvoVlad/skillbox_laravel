@@ -1,6 +1,6 @@
 @extends('layouts.main_template')
 @section('title')
-Редактирование статьи
+Редактирование статьи - Админ панель
 @endsection
 @section('content')
 <h3>Редактировать статью</h3>

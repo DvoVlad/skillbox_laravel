@@ -2,25 +2,24 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\{Post,Tag};
+use App\{Post, Tag, History};
 use Illuminate\Support\Facades\Gate;
 use App\Mail\{PostCreated, PostUpdated, PostDeleted};
+use Illuminate\Support\Facades\Auth;
+use DB;
+use App\Service\DataUpdater;
 
 class PostController extends Controller
 {
 	public function adminEdit(Post $post)
     {
-		if(! Gate::authorize('admin', $post)){
-			return back()->with('errors', "У вас нет прав для входа в админ раздел.");
-		}
-		return view("post.admin_post_update", ['post' => $post]);
+		Gate::authorize('admin');
+		return view("post.admin_post_update", ['post' => $post, 'tags' => Tag::all()]);
     }
     
 	public function admin()
 	{
-		if(! Gate::authorize('admin')){
-			return back()->with('errors',"У вас нет прав для входа в админ раздел.");
-		}
+		Gate::authorize('admin');
 		$posts = Post::all();
         return view('admin_articles', ['posts' => $posts]);
 	}
@@ -28,7 +27,8 @@ class PostController extends Controller
 	public function indexTags($id)
 	{
 		$posts = Tag::find($id)->posts->where("publish", "=", 1);
-        return view('main', ['posts' => $posts]);
+		$news = Tag::find($id)->news;
+        return view('main', ['posts' => $posts, 'news' => $news]);
 	}
     /**
      * Display a listing of the resource.
@@ -48,10 +48,9 @@ class PostController extends Controller
      */
     public function create()
     {
-		if(! Gate::authorize('createPost')){
-			return back()->with('errors', "Вы не авторизованы поэтому не можете писать статьи!");
-		}
-		return view("post.post_create");
+		$this->authorize("create", 'App\Post');
+		//Gate::authorize('createPost');
+		return view("post.post_create", ['tags' => Tag::all()]);
     }
 
 	private function validateForm($create, $request, $post=null)
@@ -63,13 +62,11 @@ class PostController extends Controller
 			'publish' => '',
 			'user_id' => ''
 		];
-		if($create) {
-			$validate['slug'] = 'required|alpha_dash|unique:posts';
-			$v = $request->validate($validate);
-		} else {
-			$validate['slug'] = 'required|alpha_dash|unique:posts,id,' . $post->id;
-			$v = $request->validate($validate);
+		$validate['slug'] = 'required|alpha_dash|unique:posts';
+		if(!$create) {
+			$validate['slug'] = $validate['slug'] . ',' . $post->id;
 		}
+		$v = $request->validate($validate);
 		return $v;
 	}
 
@@ -90,9 +87,8 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-		if(! Gate::authorize('createPost')){
-			return back()->with('errors', "Вы не авторизованы поэтому не можете писать статьи!");
-		}
+		$this->authorize("create", 'App\Post');
+		//Gate::authorize('createPost');
 		$v = $this->validateForm(true, $request);
 		$post = Post::create($v);
 		$this->createTags($post, $request);
@@ -123,10 +119,9 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-		if(! Gate::authorize('editPost', $post)){
-			return back()->with('errors',"У вас нет прав на редактирование статьи");
-		}
-		return view("post.post_update", ['post' => $post]);
+		$this->authorize("update", $post);
+		//Gate::authorize('editPost', $post);
+		return view("post.post_update", ['post' => $post, 'tags' => Tag::all()]);
     }
 
     /**
@@ -138,9 +133,8 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-		if (! Gate::authorize('editPost', $post)) {
-			return back()->with('errors',"У вас нет прав на редактирование статьи");
-		} 
+		$this->authorize("update", $post);
+		//Gate::authorize('editPost', $post);
 		$v = $this->validateForm(false, $request, $post);
 		$post->update($v);
 		$post->tags()->detach();
@@ -159,10 +153,9 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+		$this->authorize("delete", $post);
+		Gate::authorize('editPost', $post);
 		$deletedName = $post->name;
-		if(! Gate::authorize('editPost', $post)){
-			return back()->with('errors', "Только владелец статьи может её удалить!");
-		}
 		$post->delete();
 		\Mail::to(config('myMails.admin_email'))->send(
 			new PostDeleted($deletedName)
