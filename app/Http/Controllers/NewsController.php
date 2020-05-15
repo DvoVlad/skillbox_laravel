@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\{News,Tag};
-use App\Service\DataUpdater;
 
 class NewsController extends Controller
 {

@@ -33,6 +33,10 @@ Route::get('/contacts', "FeedbackController@create");
 
 Route::post('/contacts', "FeedbackController@store");
 
+Route::get('/admin/reports', "ReportsController@create")->middleware('auth');
+
+Route::post('/admin/reports', "ReportsController@makeReport")->middleware('auth');
+
 Route::get('/admin/feedbacks', "FeedbackController@index")->middleware('auth');
 
 Route::get('/admin/articles', "PostController@admin")->middleware('auth');;
@@ -54,3 +58,8 @@ Route::get('/service', "PushServiceController@form");
 Route::post('/service', "PushServiceController@send");
 
 Auth::routes();
+
+Route::get('test', function() {
+	//event(new \App\Events\SomethingHappens('Мы настроили ws-соединение'));
+	event(new \App\Events\AdminNotify('Только для админа'));
+});
