@@ -52,7 +52,7 @@ class NewsController extends Controller
 		];
 		$validate['slug'] = 'required|alpha_dash|unique:news';
 		if(!$create) {
-			$validate['slug'] = $validate['slug'] . ',' . $news->id;
+			$validate['slug'] = $validate['slug'] . ',id,' . $news->id;
 		}
 		$v = $request->validate($validate);
 		return $v;
