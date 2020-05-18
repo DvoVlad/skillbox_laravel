@@ -6,6 +6,7 @@
 <h3>Отчеты</h3>
 <form method="post" action="/admin/reports">
 	@csrf
+	@include('layouts.validate')
 	<div class="form-group">
 		<label>Новости <input name="news" type="checkbox"></label>
 	</div>

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Mail\Report;
+use App\{Post, News, Comment, Tag, User};
 
 class ReportMeJob implements ShouldQueue
 {
