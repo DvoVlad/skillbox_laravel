@@ -11,6 +11,12 @@ class Report extends Mailable
 {
     use Queueable, SerializesModels;
 
+	 public $postCount;
+     public $newsCount;
+     public $commentCount;
+     public $tagCount;
+     public $userCount;
+
     /**
      * Create a new message instance.
      *
@@ -32,6 +38,6 @@ class Report extends Mailable
      */
     public function build()
     {
-        return $this->markdown('mail.reports')->with("postCount", $this->postCount)->with("newsCount", $this->newsCount)->with("commentCount", $this->commentCount)->with("tagCount", $this->tagCount)->with("userCount", $this->userCount);
+        return $this->markdown('mail.reports');
     }
 }

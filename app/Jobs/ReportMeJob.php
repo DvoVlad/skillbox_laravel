@@ -24,13 +24,27 @@ class ReportMeJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($postCount, $newsCount, $commentCount, $tagCount, $userCount)
+    public function __construct($postRequest, $newsRequest, $commentRequest, $tagRequest, $userRequest)
     {
-        $this->postCount = $postCount;
-        $this->newsCount = $newsCount;
-        $this->commentCount = $commentCount;
-        $this->tagCount = $tagCount;
-        $this->userCount = $userCount;
+		if ($postRequest == 'on') {
+			$this->postCount = Post::count();
+		}
+		$newsCount = '';
+		if ($newsRequest == 'on') {
+			$this->newsCount = News::count();
+		}
+		$commentCount = '';
+		if ($commentRequest == 'on') {
+			$this->commentCount = Comment::count();
+		}
+		$tagCount = '';
+		if ($tagRequest == 'on') {
+			$this->tagCount = Tag::count();
+		}
+		$userCount = '';
+		if ($userRequest == 'on') {
+			$this->userCount = User::count();
+		}
     }
 
     /**

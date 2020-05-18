@@ -19,27 +19,7 @@ class ReportsController extends Controller
 	{
 		Gate::authorize('admin');
 		//dd($request);
-		$postCount = '';
-		if ($request->posts == 'on') {
-			$postCount = Post::count();
-		}
-		$newsCount = '';
-		if ($request->news == 'on') {
-			$newsCount = News::count();
-		}
-		$commentCount = '';
-		if ($request->comments == 'on') {
-			$commentCount = Comment::count();
-		}
-		$tagCount = '';
-		if ($request->tags == 'on') {
-			$tagCount = Tag::count();
-		}
-		$userCount = '';
-		if ($request->users == 'on') {
-			$userCount = User::count();
-		}
-		dispatch(new ReportMeJob($postCount, $newsCount, $commentCount, $tagCount, $userCount));
+		dispatch(new ReportMeJob($request->posts == 'on', $request->news, $request->comments, $$request->tags, $request->users));
 		/*\Mail::to(config('myMails.admin_email'))->send(
 			new Report($postCount, $newsCount, $commentCount, $tagCount, $userCount)
 		);*/

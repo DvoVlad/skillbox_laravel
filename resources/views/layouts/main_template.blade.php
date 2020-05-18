@@ -11,9 +11,8 @@
     <link rel="canonical" href="https://getbootstrap.com/docs/4.4/examples/blog/">
     <!-- Bootstrap core CSS -->
 	<link href="/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-	<link href="/css/app.css" rel="stylesheet">
-	<script src="/js/app.js"></script>
-	<script src="/dist/js/bootstrap-notify.min.js"></script>
+	<link href="{{mix('/css/app.css')}}" rel="stylesheet">
+	<script src="{{mix('/js/app.js')}}"></script>
 	<script>
 		//$(function() {
 		//	$.notify("Hello World: I was added to the bottom.");

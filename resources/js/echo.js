@@ -5,7 +5,7 @@ Echo
 		$.notify(e.whatHappens);
 	});
 Echo
-	.channel('laravel_database_admin')
+	.private('laravel_database_admin')
 	.listen('AdminNotify', (e) => {
 		//alert(e.whatHappens);
 		$.notify(e.message);

@@ -17,6 +17,6 @@ Broadcast::channel('App.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 Broadcast::channel('admin', function ($user) {
-    return $user->isAdmin();
-	//return true;
+    //return $user->isAdmin();
+	return true;
 });

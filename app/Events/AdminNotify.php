@@ -32,6 +32,6 @@ class AdminNotify implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('admin');
+        return new PrivateChannel('admin');
     }
 }
