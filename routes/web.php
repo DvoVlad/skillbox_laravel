@@ -60,6 +60,6 @@ Route::post('/service', "PushServiceController@send");
 Auth::routes();
 
 Route::get('test', function() {
-	event(new \App\Events\SomethingHappens('Мы настроили ws-соединение'));
+	//event(new \App\Events\SomethingHappens('Мы настроили ws-соединение'));
 	event(new \App\Events\AdminNotify('Только для админа'));
 });
