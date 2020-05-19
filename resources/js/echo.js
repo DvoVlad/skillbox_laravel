@@ -1,12 +1,11 @@
+//Echo
+//	.channel('p_hello')
+//	.listen('SomethingHappens', (e) => {
+//		alert(e.whatHappens);
+//		$.notify(e.whatHappens);
+//	});
 Echo
-	.channel('laravel_database_hello')
-	.listen('SomethingHappens', (e) => {
-		//alert(e.whatHappens);
-		$.notify(e.whatHappens);
-	});
-Echo
-	.private('laravel_database_admin')
+	.private('admin')
 	.listen('AdminNotify', (e) => {
-		//alert(e.whatHappens);
 		$.notify(e.message);
 	});

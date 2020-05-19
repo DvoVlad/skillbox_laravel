@@ -36,7 +36,8 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
  window.Echo = new Echo({
      broadcaster: 'socket.io',
-     host:window.location.hostname + ':6001'
+     host:window.location.hostname + ':6001',
+     keyPrefix: "p_"
      //namespace - можно переопределить namespace событий
      //authEndpoint - указывает адрес для авторизации используется если поменять Broadcast::routes() в сервис-провайдере
  });
