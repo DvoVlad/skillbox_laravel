@@ -13,11 +13,6 @@
 	<link href="/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	<link href="{{mix('/css/app.css')}}" rel="stylesheet">
 	<script src="{{mix('/js/app.js')}}"></script>
-	<script>
-		//$(function() {
-		//	$.notify("Hello World: I was added to the bottom.");
-		//});
-	</script>
 	<meta name="theme-color" content="#563d7c">
     <style>
       .bd-placeholder-img {

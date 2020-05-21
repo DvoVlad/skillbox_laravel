@@ -20,6 +20,11 @@ class ReportMeJob implements ShouldQueue
 	public $tagCount;
 	public $userCount;
 
+	public $postRequest;
+	public $newsRequest;
+	public $commentRequest;
+	public $tagRequest
+	public $userRequest;
     /**
      * Create a new job instance.
      *
@@ -27,25 +32,11 @@ class ReportMeJob implements ShouldQueue
      */
     public function __construct($postRequest, $newsRequest, $commentRequest, $tagRequest, $userRequest)
     {
-		if ($postRequest == 'on') {
-			$this->postCount = Post::count();
-		}
-		$newsCount = '';
-		if ($newsRequest == 'on') {
-			$this->newsCount = News::count();
-		}
-		$commentCount = '';
-		if ($commentRequest == 'on') {
-			$this->commentCount = Comment::count();
-		}
-		$tagCount = '';
-		if ($tagRequest == 'on') {
-			$this->tagCount = Tag::count();
-		}
-		$userCount = '';
-		if ($userRequest == 'on') {
-			$this->userCount = User::count();
-		}
+		$this->postRequest = $postRequest;
+		$this->newsRequest = $newsRequest;
+		$this->commentRequest = $commentRequest;
+		$this->tagRequest = $tagRequest;
+		$this->userRequest = $userRequest;
     }
 
     /**
@@ -55,6 +46,25 @@ class ReportMeJob implements ShouldQueue
      */
     public function handle()
     {
+		if ($this->postRequest == true) {
+			$this->postCount = Post::count();
+		}
+		$newsCount = '';
+		if ($this->newsRequest == true) {
+			$this->newsCount = News::count();
+		}
+		$commentCount = '';
+		if ($this->commentRequest == true) {
+			$this->commentCount = Comment::count();
+		}
+		$tagCount = '';
+		if ($this->tagRequest == true) {
+			$this->tagCount = Tag::count();
+		}
+		$userCount = '';
+		if ($this->userRequest == true) {
+			$this->userCount = User::count();
+		}
         \Mail::to(config('myMails.admin_email'))->send(
 			new Report($this->postCount, $this->newsCount, $this->commentCount, $this->tagCount, $this->userCount)
 		);

@@ -19,7 +19,7 @@ class ReportsController extends Controller
 	{
 		Gate::authorize('admin');
 		//dd($request);
-		dispatch(new ReportMeJob($request->posts, $request->news, $request->comments, $request->tags, $request->users));
+		dispatch(new ReportMeJob($request->has('posts'), $request->has('news'), $request->has('comments'), $request->has('tags'), $request->has('users')));
 		/*\Mail::to(config('myMails.admin_email'))->send(
 			new Report($postCount, $newsCount, $commentCount, $tagCount, $userCount)
 		);*/
