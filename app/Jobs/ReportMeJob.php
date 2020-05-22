@@ -46,23 +46,23 @@ class ReportMeJob implements ShouldQueue
      */
     public function handle()
     {
-		if ($this->postRequest == true) {
+		if ($this->postRequest) {
 			$this->postCount = Post::count();
 		}
 		$newsCount = '';
-		if ($this->newsRequest == true) {
+		if ($this->newsRequest) {
 			$this->newsCount = News::count();
 		}
 		$commentCount = '';
-		if ($this->commentRequest == true) {
+		if ($this->commentRequest) {
 			$this->commentCount = Comment::count();
 		}
 		$tagCount = '';
-		if ($this->tagRequest == true) {
+		if ($this->tagRequest) {
 			$this->tagCount = Tag::count();
 		}
 		$userCount = '';
-		if ($this->userRequest == true) {
+		if ($this->userRequest) {
 			$this->userCount = User::count();
 		}
         \Mail::to(config('myMails.admin_email'))->send(
