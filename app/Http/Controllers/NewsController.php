@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\{News,Tag};
-use App\Service\DataUpdater;
 
 class NewsController extends Controller
 {
@@ -53,7 +52,7 @@ class NewsController extends Controller
 		];
 		$validate['slug'] = 'required|alpha_dash|unique:news';
 		if(!$create) {
-			$validate['slug'] = $validate['slug'] . ',' . $news->id;
+			$validate['slug'] = $validate['slug'] . ',id,' . $news->id;
 		}
 		$v = $request->validate($validate);
 		return $v;

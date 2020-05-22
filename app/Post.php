@@ -44,6 +44,10 @@ class Post extends Model
 				'before' => json_encode(Arr::only($post->fresh()->toArray(), array_keys($after))), 
 				'after' => json_encode($after)
 			]);
+			$messageBefore = json_encode(Arr::only($post->fresh()->toArray(), array_keys($after)));
+			$messageAfter = json_encode($after);
+			$message = "<a href='/posts/{$post->slug}'>{$post->name}</a> Было: {$messageBefore} Стало: {$messageAfter}";
+			event(new \App\Events\AdminNotify($message));
 		});
 	}
 }

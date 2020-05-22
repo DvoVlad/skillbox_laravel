@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Gate;
 use App\Mail\{PostCreated, PostUpdated, PostDeleted};
 use Illuminate\Support\Facades\Auth;
 use DB;
-use App\Service\DataUpdater;
 
 class PostController extends Controller
 {
@@ -64,7 +63,8 @@ class PostController extends Controller
 		];
 		$validate['slug'] = 'required|alpha_dash|unique:posts';
 		if(!$create) {
-			$validate['slug'] = $validate['slug'] . ',' . $post->id;
+			$validate['slug'] = $validate['slug'] . ',id,' . $post->id;
+			//dd($validate['slug']);
 		}
 		$v = $request->validate($validate);
 		return $v;
