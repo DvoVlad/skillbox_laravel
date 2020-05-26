@@ -47,8 +47,8 @@ class Post extends Model
 			Cache::tags("posts")->flush();
 		});
 		static::updating(function(Post $post){
-			Cache::tags("posts")->flush();
-			Cache::tags("post_" . $post->slug)->flush();
+			Cache::tags(["posts"])->flush();
+			Cache::tags(["post_" . $post->slug])->flush();
 			$after = $post->getDirty();
 			$post->history()->attach(auth()->user()->id, [
 				'before' => json_encode(Arr::only($post->fresh()->toArray(), array_keys($after))), 

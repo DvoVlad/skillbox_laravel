@@ -27,11 +27,11 @@ class PostController extends Controller
 	public function indexTags($id)
 	{
 		$cacheTime = 60 * 60 * 24;
-		$posts = Cache::tags('posts', 'tag_' . $id)->remember('post_tag_' . $id, $cacheTime, function() use($id) {
+		$posts = Cache::tags(['posts', 'tag_' . $id])->remember('post_tag_' . $id, $cacheTime, function() use($id) {
 			return Tag::find($id)->posts->where("publish", "=", 1);
 		});
 		//$posts = Tag::find($id)->posts->where("publish", "=", 1);
-		$news = Cache::tags('news', 'tag_' . $id)->remember('news_tag_' . $id, $cacheTime, function() use($id) {
+		$news = Cache::tags(['news', 'tag_' . $id])->remember('news_tag_' . $id, $cacheTime, function() use($id) {
 			return Tag::find($id)->news;
 		});
 		//$news = Tag::find($id)->news;
@@ -45,7 +45,7 @@ class PostController extends Controller
     public function index()
     {
 		$cacheTime = 60 * 60 * 24;
-		$posts = Cache::tags("posts")->remember('all_posts', $cacheTime, function () {
+		$posts = Cache::tags(["posts"])->remember('all_posts', $cacheTime, function () {
 			return Post::where("publish", "=", 1)->latest()->get();
 		});
 		//$posts = Post::where("publish", "=", 1)->latest()->get();
@@ -119,7 +119,7 @@ class PostController extends Controller
     public function show($post)
     {
 		$cacheTime = 60 * 60 * 24;
-		$post = Cache::tags("post_" . $post)->remember('post_' . $post, $cacheTime, function() use ($post) {
+		$post = Cache::tags(["post_" . $post])->remember('post_' . $post, $cacheTime, function() use ($post) {
 			return Post::where('slug', '=', $post)->get()->first();
 		});
 		//dd($post);

@@ -19,11 +19,11 @@ class Tag extends Model
     {
 		parent::boot();
 		static::creating(function (News $news) {
-			Cache::tags("tags")->flush();
+			Cache::tags(["tags"])->flush();
         }); 
 		static::deleting(function(Tag $tag) {
-			Cache::tags("tag_" . $tag->id)->flush();
-			Cache::tags("tags")->flush();
+			Cache::tags(["tag_" . $tag->id])->flush();
+			Cache::tags(["tags"])->flush();
 		});
 	}
 }

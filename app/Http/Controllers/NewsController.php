@@ -29,7 +29,7 @@ class NewsController extends Controller
     public function index()
     {
 		$cacheTime = 60 * 60 * 24;
-		$news = Cache::tags("news")->remember('all_news', $cacheTime, function () {
+		$news = Cache::tags(["news"])->remember('all_news', $cacheTime, function () {
 			return News::all();
 		});
         //$news = News::all();
@@ -100,7 +100,7 @@ class NewsController extends Controller
     public function show($news)
     {
 		$cacheTime = 60 * 60 * 24;
-		$news = Cache::tags("news_" . $news)->remember('post_' . $news, $cacheTime, function() use ($news) {
+		$news = Cache::tags(["news_" . $news])->remember('post_' . $news, $cacheTime, function() use ($news) {
 			return News::where('slug', '=', $news)->get()->first();
 		});
         return view('new.detailed_new', ['new' => $news, 'title' => $news->name]);
