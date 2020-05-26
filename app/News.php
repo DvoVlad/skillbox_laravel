@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class News extends Model
 {
@@ -29,4 +30,19 @@ class News extends Model
     {
         return $this->morphMany('App\Comment', 'commentable');
     }
+    public static function boot()
+    {
+		parent::boot();
+		static::creating(function (News $news) {
+			Cache::tags("news")->flush();
+        }); 
+		static::deleting(function(News $news) {
+			Cache::tags("news_" . $news->slug)->flush();
+			Cache::tags("news")->flush();
+		});
+		static::updating(function(News $news){
+			Cache::tags("news_" . $news->slug)->flush();
+			Cache::tags("news")->flush();
+		});
+	}
 }

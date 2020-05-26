@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Gate;
 use App\Mail\{PostCreated, PostUpdated, PostDeleted};
 use Illuminate\Support\Facades\Auth;
 use DB;
+use Illuminate\Support\Facades\Cache;
 
 class PostController extends Controller
 {
@@ -25,8 +26,15 @@ class PostController extends Controller
 	
 	public function indexTags($id)
 	{
-		$posts = Tag::find($id)->posts->where("publish", "=", 1);
-		$news = Tag::find($id)->news;
+		$cacheTime = 60 * 60 * 24;
+		$posts = Cache::tags('posts', 'tag_' . $id)->remember('post_tag_' . $id, $cacheTime, function() use($id) {
+			return Tag::find($id)->posts->where("publish", "=", 1);
+		});
+		//$posts = Tag::find($id)->posts->where("publish", "=", 1);
+		$news = Cache::tags('news', 'tag_' . $id)->remember('news_tag_' . $id, $cacheTime, function() use($id) {
+			return Tag::find($id)->news;
+		});
+		//$news = Tag::find($id)->news;
         return view('main', ['posts' => $posts, 'news' => $news]);
 	}
     /**
@@ -36,7 +44,11 @@ class PostController extends Controller
      */
     public function index()
     {
-		$posts = Post::where("publish", "=", 1)->latest()->get();
+		$cacheTime = 60 * 60 * 24;
+		$posts = Cache::tags("posts")->remember('all_posts', $cacheTime, function () {
+			return Post::where("publish", "=", 1)->latest()->get();
+		});
+		//$posts = Post::where("publish", "=", 1)->latest()->get();
         return view('main', ['posts' => $posts]);
     }
 
@@ -104,8 +116,13 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function show($post)
     {
+		$cacheTime = 60 * 60 * 24;
+		$post = Cache::tags("post_" . $post)->remember('post_' . $post, $cacheTime, function() use ($post) {
+			return Post::where('slug', '=', $post)->get()->first();
+		});
+		//dd($post);
 		if ($post->publish == 1) {
 			return view('post.detailed_post', ['post' => $post, 'title' => $post->name]);
 		}

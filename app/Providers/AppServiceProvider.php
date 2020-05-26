@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use DB;
 use App\{Post, News};
+use Illuminate\Support\Facades\Cache;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,7 +37,11 @@ class AppServiceProvider extends ServiceProvider
 			return auth()->user()->isAdmin();
 		});
         view()->composer('layouts.allTags', function($view) {
-			$view->with('tags', \App\Tag::has('posts')->orHas('news')->get());
+			$cacheTime = 60 * 60 * 24;
+			$tags = Cache::tags('tags')->remember("all_tags", $cacheTime, function() {
+				return \App\Tag::has('posts')->orHas('news')->get();
+			});
+			$view->with('tags', $tags);
 		});
     }
 }

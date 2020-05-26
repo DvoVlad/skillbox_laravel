@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 
 class Post extends Model
 {
@@ -38,7 +39,16 @@ class Post extends Model
     public static function boot()
     {
 		parent::boot();
+		static::creating(function (Post $post) {
+			Cache::tags("posts")->flush();
+        }); 
+		static::deleting(function(Post $post) {
+			Cache::tags("post_" . $post->slug)->flush();
+			Cache::tags("posts")->flush();
+		});
 		static::updating(function(Post $post){
+			Cache::tags("posts")->flush();
+			Cache::tags("post_" . $post->slug)->flush();
 			$after = $post->getDirty();
 			$post->history()->attach(auth()->user()->id, [
 				'before' => json_encode(Arr::only($post->fresh()->toArray(), array_keys($after))), 
