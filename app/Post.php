@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Cache;
 
 class Post extends Model
 {
+	public function scopePublish($query)
+    {
+        return $query->where('publish','=', 1);
+    }
+	
 	public function getRouteKeyName()
 	{
 		return 'slug';

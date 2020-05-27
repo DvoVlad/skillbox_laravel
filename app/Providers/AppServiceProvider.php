@@ -38,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
 		});
         view()->composer('layouts.allTags', function($view) {
 			$cacheTime = 60 * 60 * 24;
-			$tags = Cache::tags('tags')->remember("all_tags", $cacheTime, function() {
+			$tags = Cache::tags(['tags', 'news', 'posts'])->remember("all_tags", $cacheTime, function() {
 				return \App\Tag::has('posts')->orHas('news')->get();
 			});
 			$view->with('tags', $tags);

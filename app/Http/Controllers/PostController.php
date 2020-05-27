@@ -28,7 +28,7 @@ class PostController extends Controller
 	{
 		$cacheTime = 60 * 60 * 24;
 		$posts = Cache::tags(['posts', 'tag_' . $id])->remember('post_tag_' . $id, $cacheTime, function() use($id) {
-			return Tag::find($id)->posts->where("publish", "=", 1);
+			return Tag::find($id)->posts->publish();
 		});
 		//$posts = Tag::find($id)->posts->where("publish", "=", 1);
 		$news = Cache::tags(['news', 'tag_' . $id])->remember('news_tag_' . $id, $cacheTime, function() use($id) {
@@ -46,7 +46,7 @@ class PostController extends Controller
     {
 		$cacheTime = 60 * 60 * 24;
 		$posts = Cache::tags(["posts"])->remember('all_posts', $cacheTime, function () {
-			return Post::where("publish", "=", 1)->latest()->get();
+			return Post::publish()->latest()->get();
 		});
 		//$posts = Post::where("publish", "=", 1)->latest()->get();
         return view('main', ['posts' => $posts]);
@@ -123,8 +123,10 @@ class PostController extends Controller
 			return Post::where('slug', '=', $post)->get()->first();
 		});
 		//dd($post);
-		if ($post->publish == 1) {
+		if ($post->publish()) {
 			return view('post.detailed_post', ['post' => $post, 'title' => $post->name]);
+		} else {
+			return "Статья не опубликована или её нет";
 		}
     }
 
