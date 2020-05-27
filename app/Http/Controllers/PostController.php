@@ -28,11 +28,17 @@ class PostController extends Controller
 	{
 		$cacheTime = 60 * 60 * 24;
 		$posts = Cache::tags(['posts', 'tag_' . $id])->remember('post_tag_' . $id, $cacheTime, function() use($id) {
-			return Tag::find($id)->posts->publish();
+			//return Tag::find($id)->posts->publish();
+			return App\Post::publish()->whereHas('tags', function (Builder $query) {
+				$query->where('id', '=', $id);
+			})->get();
 		});
 		//$posts = Tag::find($id)->posts->where("publish", "=", 1);
 		$news = Cache::tags(['news', 'tag_' . $id])->remember('news_tag_' . $id, $cacheTime, function() use($id) {
-			return Tag::find($id)->news;
+			//return Tag::find($id)->news;
+			return App\News::whereHas('tags', function (Builder $query) {
+				$query->where('id', '=', $id);
+			})->get();
 		});
 		//$news = Tag::find($id)->news;
         return view('main', ['posts' => $posts, 'news' => $news]);
