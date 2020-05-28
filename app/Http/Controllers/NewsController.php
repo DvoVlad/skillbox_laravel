@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\{News,Tag};
+use Illuminate\Support\Facades\Cache;
 
 class NewsController extends Controller
 {
@@ -27,7 +28,11 @@ class NewsController extends Controller
      */
     public function index()
     {
-        $news = News::all();
+		$cacheTime = 60 * 60 * 24;
+		$news = Cache::tags(["news"])->remember('all_news', $cacheTime, function () {
+			return News::all();
+		});
+        //$news = News::all();
         return view('main_news', ['news' => $news]);
     }
 
@@ -92,8 +97,12 @@ class NewsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(News $news)
+    public function show($news)
     {
+		$cacheTime = 60 * 60 * 24;
+		$news = Cache::tags(["news_" . $news])->remember('post_' . $news, $cacheTime, function() use ($news) {
+			return News::where('slug', '=', $news)->get()->first();
+		});
         return view('new.detailed_new', ['new' => $news, 'title' => $news->name]);
     }
 
